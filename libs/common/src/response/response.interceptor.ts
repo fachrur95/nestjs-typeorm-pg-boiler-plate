@@ -1,16 +1,30 @@
 import {
   CallHandler,
+  ClassSerializerInterceptor,
   ExecutionContext,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 import { ResponseDto } from '../dto';
+import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
-  intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
-    return next.handle().pipe(
+  constructor(private reflector: Reflector) {}
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const classSerializerInterceptor = new ClassSerializerInterceptor(
+      this.reflector,
+      { excludeExtraneousValues: true },
+    );
+
+    // Panggil ClassSerializerInterceptor untuk menangani serialisasi
+    const serializedContext = classSerializerInterceptor.intercept(
+      context,
+      next,
+    );
+
+    return serializedContext.pipe(
       map((response) => {
         // Memeriksa apakah ada 'message' yang disediakan di dalam respons
         const message = response.message || 'Request successfully retrieved';

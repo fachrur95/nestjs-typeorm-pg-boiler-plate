@@ -1,7 +1,7 @@
 import { HttpExceptionFilter, ResponseInterceptor } from '@app/common';
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as basicAuth from 'express-basic-auth';
 import { Logger as PinoLogger } from 'nestjs-pino';
@@ -22,7 +22,8 @@ async function bootstrap() {
     }),
   );
   app.useLogger(app.get(PinoLogger));
-  app.useGlobalInterceptors(new ResponseInterceptor());
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new ResponseInterceptor(reflector));
   app.useGlobalFilters(new HttpExceptionFilter());
 
   setupSwagger(app);
