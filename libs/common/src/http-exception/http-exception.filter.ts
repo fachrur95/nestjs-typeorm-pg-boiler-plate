@@ -20,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         success: false,
         message: exception.message || 'Error occurred',
         data: null,
-        err: exceptionResponse,
+        error: exceptionResponse,
       }),
     );
   }

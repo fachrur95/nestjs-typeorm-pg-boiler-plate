@@ -16,7 +16,7 @@ export class ResponseDto<T> {
 
   @ApiProperty()
   @Expose()
-  err: any;
+  error: any;
 
   @ApiProperty()
   @Expose()
